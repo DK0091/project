@@ -50,7 +50,7 @@ userschema.pre("save",async function(next){
     if(!this.isModified("password")){
         return next()
     }
-    this.password=bcrypt.hash(this.password,10)
+    this.password= await bcrypt.hash(this.password,10)
 
 })
 userschema.methods.isPasswordCorrect = async function(password){
@@ -58,7 +58,7 @@ userschema.methods.isPasswordCorrect = async function(password){
 }
 
 userschema.methods.generateAccesstoken = function(){
-   jwt.sign(
+   return jwt.sign(
     {
     id:this.id,
     email:this.email,
@@ -71,13 +71,13 @@ userschema.methods.generateAccesstoken = function(){
    }
 )
 }
-userschema.methods.generateAccesstoken = function(){
-   jwt.sign(
+userschema.methods.generateRefreshtoken= function(){
+  return jwt.sign(
     {
     id:this.id,
     email:this.email,
    },
-   process.env.REFRESH_TOKEN_EXPIRY,
+   process.env.REFRESH_TOKEN_SECRET,
    {
     expiresIn:process.env.REFRESH_TOKEN_EXPIRY
    }
